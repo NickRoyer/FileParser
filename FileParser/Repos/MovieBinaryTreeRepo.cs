@@ -9,8 +9,8 @@ namespace FileParser.Repos
     {
         public FirstField Field { get; set; }
 
-        public BinaryTree<long, Dictionary<string, List<Movie>>> BinaryTreeByYearByGenre;
-        public Dictionary<string, BinaryTree<long, List<Movie>>> BinaryTreeByGenreByYear;
+        public RedBlackTree<long, Dictionary<string, List<Movie>>> BinaryTreeByYearByGenre;
+        public Dictionary<string, RedBlackTree<long, List<Movie>>> BinaryTreeByGenreByYear;
 
         public BinaryTree<long, List<Movie>> MoneyGrossBinaryTree { get; set; }
 
@@ -24,7 +24,7 @@ namespace FileParser.Repos
             Field = ff;
             if (Field == FirstField.Year)
             {
-                BinaryTreeByYearByGenre = new BinaryTree<long, Dictionary<string, List<Movie>>>();
+                BinaryTreeByYearByGenre = new RedBlackTree<long, Dictionary<string, List<Movie>>>();
 
                 foreach (var YearGrp in movies.GroupBy(m => m.Year))
                 {                    
@@ -41,11 +41,11 @@ namespace FileParser.Repos
             }
             else
             {
-                BinaryTreeByGenreByYear = new Dictionary<string, BinaryTree<long, List<Movie>>>();
+                BinaryTreeByGenreByYear = new Dictionary<string, RedBlackTree<long, List<Movie>>>();
 
                 foreach (var genreGrp in movies.GroupBy(m => m.Genre))                    
-                {                    
-                    BinaryTree<long, List<Movie>> yearTree = new BinaryTree<long, List<Movie>>();
+                {
+                    RedBlackTree<long, List<Movie>> yearTree = new RedBlackTree<long, List<Movie>>();
 
                     foreach (var YearGrp in genreGrp.GroupBy(m => m.Year))
                     {
@@ -78,7 +78,7 @@ namespace FileParser.Repos
             }
             else
             {
-                BinaryTreeByGenreByYear.TryGetValue(genre, out BinaryTree<long, List<Movie>> yearTree);
+                BinaryTreeByGenreByYear.TryGetValue(genre, out RedBlackTree<long, List<Movie>> yearTree);
                 if (yearTree != null)
                 {
                     foreach (var l in yearTree.Range(startYear, endYear))

@@ -17,16 +17,45 @@ namespace FileParser.Repos
         public BinaryTreeNode<K, V> Left { get; set; }
         public BinaryTreeNode<K, V> Right { get; set; }
         public BinaryTreeNode<K, V> Parent { get; set; }
+
+        public BinaryTreeNode<K, V> GrandParent()
+        {
+            if (Parent == null)
+                return null;
+            return Parent.Parent;
+        }
+
+        public BinaryTreeNode<K, V> Sibling()
+        {
+            if (Parent == null)
+                return null;
+            if (this == Parent.Left)
+                return Parent.Right;
+            else
+                return Parent.Left;
+        }
+
+        public BinaryTreeNode<K, V> Uncle(){
+            BinaryTreeNode<K, V> g = GrandParent();
+            if (g == null || Parent == null)
+                return null;
+            return Parent.Sibling();
+        }   
+
     }
 
     public class BinaryTree<K, V> where K : IComparable<K>
     {
-        public BinaryTreeNode<K, V> Root { get; private set; }
+        public BinaryTreeNode<K, V> Root { get; protected set; }
 
-        public void Add(K key, V value)
+        public virtual void Add(K key, V value)
         {
             BinaryTreeNode<K, V> newNode = new BinaryTreeNode<K, V>(key, value);
+            InsertNode(newNode);
+        }
 
+        protected void InsertNode(BinaryTreeNode<K, V> newNode)
+        {
             if (Root == null)
                 Root = newNode;
             else
@@ -37,10 +66,10 @@ namespace FileParser.Repos
                 while (true)
                 {
                     parent = current;
-                    int compareRes = key.CompareTo(current.Key);
+                    int compareRes = newNode.Key.CompareTo(current.Key);
                     if (compareRes == 0)
                     {
-                        throw new Exception("Duplicate Key value being inserted into the binary tree. Key Value: " + key.ToString());
+                        throw new Exception("Duplicate Key value being inserted into the binary tree. Key Value: " + newNode.Key.ToString());
                     }
                     else if (compareRes < 0)
                     {
@@ -116,7 +145,7 @@ namespace FileParser.Repos
             return InOrderValuesRange(foundNode, ref StartInc, ref EndInc);
         }
 
-        private List<V> InOrderValuesRangeSubTree(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
+        protected List<V> InOrderValuesRangeSubTree(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
         {                        
             if (l == null)
                 l = new List<V>();
@@ -139,7 +168,7 @@ namespace FileParser.Repos
             return l;
         }
 
-        private List<V> InOrderValuesRange(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
+        protected List<V> InOrderValuesRange(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
         {
             if (l == null)
                 l = new List<V>();
@@ -191,7 +220,7 @@ namespace FileParser.Repos
             return Inorder(Root);
         }
 
-        private List<V> Inorder(BinaryTreeNode<K, V> node, List<V> l = null)
+        protected List<V> Inorder(BinaryTreeNode<K, V> node, List<V> l = null)
         {
             if (l == null)
                 l = new List<V>();

@@ -8,6 +8,21 @@ namespace ParserUnitTests
 {
     public class BinaryTreeUnitTest
     {
+        public enum TreeType { BinaryTree, RedBlackTree}
+
+        public BinaryTree<long, string> TreeFactory(TreeType type)
+        {
+            switch (type)
+            {
+                case TreeType.BinaryTree:
+                    return new BinaryTree<long, string>();
+                case TreeType.RedBlackTree:
+                    return new RedBlackTree<long, string>();
+            }
+
+            return null; 
+        }
+
         [Fact]
         public void VerifyOneNode()
         {
@@ -121,10 +136,12 @@ namespace ParserUnitTests
             Assert.Null(currentNode.Left);
         }
 
-        [Fact]
-        public void VerifyFindLeft()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyFindLeft(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(5, "Test Root");
             testTree.Add(3, "Test 3");
@@ -134,10 +151,12 @@ namespace ParserUnitTests
             Assert.Equal("Test 12", testTree.Get(12));
         }
 
-        [Fact]
-        public void VerifyFindDoesNotFind()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyFindDoesNotFind(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(5, "Test Root");
             testTree.Add(3, "Test 3");
@@ -147,10 +166,12 @@ namespace ParserUnitTests
             Assert.Null(testTree.Get(1));
         }
 
-        [Fact]
-        public void VerifyFindRight()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyFindRight(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(5, "Test Root");
             testTree.Add(8, "Test 8");
@@ -160,10 +181,12 @@ namespace ParserUnitTests
             Assert.Equal("Test 8", testTree.Get(8));
         }
 
-        [Fact]
-        public void VerifyMultiDirectionalFind()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyMultiDirectionalFind(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(10, "Test Root");
             testTree.Add(6, "Test 6");
@@ -179,18 +202,22 @@ namespace ParserUnitTests
             Assert.Null(testTree.Get(9));
         }
 
-        [Fact]
-        public void VerifyFindException()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyFindException(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             Assert.Throws<Exception>(() => testTree.Get(12));
         }
 
-        [Fact]
-        public void VerifyDuplicateException()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyDuplicateException(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
             testTree.Add(15, "Test 15");
 
             Assert.Throws<Exception>(() => testTree.Add(15, "Test 15"));
@@ -201,10 +228,12 @@ namespace ParserUnitTests
             return String.Join('_', s);
         }
 
-        [Fact]
-        public void VerifyRangeSmallTree()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeSmallTree(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(4, "4");
             testTree.Add(2, "2");
@@ -223,10 +252,12 @@ namespace ParserUnitTests
             Assert.Equal("3_4_6", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeSmallTreeRightOnly()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeSmallTreeRightOnly(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(1, "1");
             testTree.Add(2, "2");
@@ -245,10 +276,12 @@ namespace ParserUnitTests
             //Assert.Equal("3_4_5", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeLargeTree2()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeLargeTree2(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(225, "225");
             testTree.Add(300, "300");
@@ -299,10 +332,12 @@ namespace ParserUnitTests
             Assert.Equal("100_101_105_115_120_125_190", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeLargeTree3()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeLargeTree3(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(1, "1");
             testTree.Add(225, "225");            
@@ -353,11 +388,13 @@ namespace ParserUnitTests
             Assert.Equal("100_101_105_115_120_125_190", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeLargeTree4()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeLargeTree4(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
-            
+            BinaryTree<long, string> testTree = TreeFactory(type);
+
             testTree.Add(301, "391");
             testTree.Add(53, "53");
             testTree.Add(200, "200");
@@ -416,11 +453,13 @@ namespace ParserUnitTests
             Assert.Equal("100_101_105_115_120_125_190", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeLargeTree5()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeLargeTree5(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
-                              
+            BinaryTree<long, string> testTree = TreeFactory(type);
+
             testTree.Add(18, "18");
             testTree.Add(390, "390");
             testTree.Add(25, "25");
@@ -482,10 +521,12 @@ namespace ParserUnitTests
             Assert.Equal("6_8_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30_31_33_53", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeSingleElement()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeSingleElement(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(4, "4");
 
@@ -493,10 +534,12 @@ namespace ParserUnitTests
             Assert.Equal("4", a);
         }
 
-        [Fact]
-        public void VerifyRangeSingleItemRange()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeSingleItemRange(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(4, "4");
             testTree.Add(2, "2");
@@ -509,10 +552,12 @@ namespace ParserUnitTests
             Assert.Equal("4", a);
         }
 
-        [Fact]
-        public void VerifyInOrderTreePrint()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyInOrderTreePrint(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
             testTree.Add(1, "1");
             testTree.Add(2, "2");
             testTree.Add(4, "4a");
@@ -523,10 +568,12 @@ namespace ParserUnitTests
             Assert.Equal("1_2_3_4a", a.ToString());
         }
 
-        [Fact]
-        public void VerifyRangeLargeTree()
+        [Theory]
+        [InlineData(TreeType.BinaryTree)]
+        [InlineData(TreeType.RedBlackTree)]
+        public void VerifyRangeLargeTree(TreeType type)
         {
-            BinaryTree<long, string> testTree = new BinaryTree<long, string>();
+            BinaryTree<long, string> testTree = TreeFactory(type);
 
             testTree.Add(21, "21");
             testTree.Add(17, "17");
