@@ -160,8 +160,8 @@ namespace FileParser.Repos
                     InOrderValuesRangeSubTree(node, ref rangeMin, ref rangeMax, l);
 
                     bool moveLeft = false;
-                    //On Right moving to parent continue, On Left moving to parent stop and check the tree for additional values
-                    //Once the root has been reached the entire tree has been traversed in order
+                    //On Right moving to parent continue, On Left moving to parent stop and traverse the tree for additional values on right children
+                    //Once the root has been reached the entire tree has been traversed in order (by calling the recursive function)
                     while (!rootReached && !moveLeft)
                     {
                         BinaryTreeNode<K, V> parentNode = node.Parent;
