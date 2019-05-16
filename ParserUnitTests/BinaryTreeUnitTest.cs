@@ -225,6 +225,7 @@ namespace ParserUnitTests
             testTree.Add(1, "1");
 
             RedBlackTreeNode<long, string> currentNode = (RedBlackTreeNode<long, string>)testTree.Root;
+            
 
             Assert.Equal(6, currentNode.Key);
             Assert.Equal(0, currentNode.Color);
@@ -232,27 +233,36 @@ namespace ParserUnitTests
             currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
 
             Assert.Equal(4, currentNode.Key);
-            Assert.Equal(0, currentNode.Color);
+            Assert.Equal(1, currentNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
-            Assert.Equal(8, currentNode.Key);
-            Assert.Equal(0, currentNode.Color);
+            RedBlackTreeNode<long, string> siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+
+            Assert.Equal(8, siblingNode.Key);
+            Assert.Equal(1, siblingNode.Color);
 
             currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
             Assert.Equal(2, currentNode.Key);
+            Assert.Equal(0, currentNode.Color);
+
+            siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            Assert.Equal(5, siblingNode.Key);
+            Assert.Equal(0, siblingNode.Color);
+
+            currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
+            Assert.Equal(1, currentNode.Key);
             Assert.Equal(1, currentNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
-            Assert.Equal(5, currentNode.Sibling().Key);
-
-            Assert.Equal(1, currentNode.Left.Key);
-            Assert.Equal(3, currentNode.Right.Key);
+            siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            Assert.Equal(3, siblingNode.Key);
+            Assert.Equal(1, currentNode.Color);
 
             currentNode = (RedBlackTreeNode<long, string>)testTree.Root.Right.Left;
             Assert.Equal(7, currentNode.Key);
+            Assert.Equal(0, currentNode.Color);
 
             currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
             Assert.Equal(9, currentNode.Key);
+            Assert.Equal(0, currentNode.Color);
         }
 
 
@@ -784,7 +794,7 @@ namespace ParserUnitTests
                 Assert.Equal(11, MaxNodeDepth(testTree.Root));
 
             if (type == TreeType.RedBlackTree)
-                Assert.Equal(6, MaxNodeDepth(testTree.Root));
+                Assert.Equal(7, MaxNodeDepth(testTree.Root));
         }
 
         [Theory]

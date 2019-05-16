@@ -99,8 +99,8 @@ namespace FileParser.Repos
             else
                 Insert_4a_RedParent_BlackUncle(node);
 
-            if (node.Parent != null)
-                Insert_Repair_Tree(nodeParent);
+            //if (node.Parent != null)
+            //    Insert_Repair_Tree(nodeParent);
 
         }
 
