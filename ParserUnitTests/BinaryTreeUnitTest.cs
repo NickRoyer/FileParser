@@ -232,10 +232,17 @@ namespace ParserUnitTests
             currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
 
             Assert.Equal(4, currentNode.Key);
-            Assert.Equal(8, currentNode.Sibling().Key);
+            Assert.Equal(0, currentNode.Color);
+
+            currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            Assert.Equal(8, currentNode.Key);
+            Assert.Equal(0, currentNode.Color);
 
             currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
             Assert.Equal(2, currentNode.Key);
+            Assert.Equal(1, currentNode.Color);
+
+            currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
             Assert.Equal(5, currentNode.Sibling().Key);
 
             Assert.Equal(1, currentNode.Left.Key);

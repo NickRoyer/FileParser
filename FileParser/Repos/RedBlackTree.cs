@@ -12,6 +12,7 @@ namespace FileParser.Repos
         }
 
         public byte Color { get; set; }
+
     }
 
     public class RedBlackTree<K,V> : BinaryTree<K,V> where K : IComparable<K> 
