@@ -79,6 +79,12 @@ namespace FileParser.Tests
             grossRepos.Add(RBTreeYear.Repo);
             grossRepos.Add(SortedDictYear.Repo);
 
+            MovieBinaryTreeRepo btr = (MovieBinaryTreeRepo)BTreeYear.Repo;
+            Console.WriteLine("Binary Tree Node Depth: " + btr.MoneyGrossBinaryTree.MaxNodeDepth());
+
+            MovieBinaryTreeRepo rbtr = (MovieBinaryTreeRepo)RBTreeYear.Repo;
+            Console.WriteLine("RedBlack Tree Node Depth: " + rbtr.MoneyGrossBinaryTree.MaxNodeDepth());
+
             //PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 1, MinGross = 10000, MaxGross = 100000 });
             PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 10, MinGross = 1000, MaxGross = 1000000 });
         }

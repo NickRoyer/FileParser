@@ -243,5 +243,25 @@ namespace FileParser.Repos
             return l;
         }
 
+        public int MaxNodeDepth(BinaryTreeNode<K, V> node = null, int depth = 1)
+        {
+            int LeftDepth = depth;
+            int RightDepth = depth;
+
+            if (node == null)
+                node = Root;
+
+            if (node.Left == null && node.Right == null)
+                return depth;
+
+            if (node.Left != null)
+                LeftDepth = MaxNodeDepth(node.Left, depth + 1);
+
+            if (node.Right != null)
+                RightDepth = MaxNodeDepth(node.Right, depth + 1);
+
+            return Math.Max(LeftDepth, RightDepth);
+        }
+
     }
 }

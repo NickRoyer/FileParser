@@ -685,24 +685,7 @@ namespace ParserUnitTests
             a = BuildTestString(testTree.Range(6, 72));
             Assert.Equal("6_8_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30_31_33_53", a.ToString());
         }
-
-        public int MaxNodeDepth(BinaryTreeNode<long, string> node, int depth = 1)
-        {
-            int LeftDepth = depth;
-            int RightDepth = depth;
-
-            if (node.Left == null && node.Right == null)
-                return depth;
-
-            if (node.Left != null)
-                LeftDepth = MaxNodeDepth(node.Left, depth + 1);
-
-            if (node.Right != null)
-                RightDepth = MaxNodeDepth(node.Right, depth + 1);
-
-            return Math.Max(LeftDepth, RightDepth);
-        }
-
+      
         [Fact]
         public void TestMaxNodeDepth()
         {
@@ -710,24 +693,24 @@ namespace ParserUnitTests
 
             testTree.Add(5, "5");
 
-            Assert.Equal(1, MaxNodeDepth(testTree.Root));
+            Assert.Equal(1, testTree.MaxNodeDepth(testTree.Root));
 
             testTree.Add(3, "3");
-            Assert.Equal(2, MaxNodeDepth(testTree.Root));
+            Assert.Equal(2, testTree.MaxNodeDepth(testTree.Root));
 
             testTree.Add(9, "9");
-            Assert.Equal(2, MaxNodeDepth(testTree.Root));
+            Assert.Equal(2, testTree.MaxNodeDepth(testTree.Root));
 
             testTree.Add(1, "1");
-            Assert.Equal(3, MaxNodeDepth(testTree.Root));
+            Assert.Equal(3, testTree.MaxNodeDepth(testTree.Root));
 
             testTree.Add(10, "10");
-            Assert.Equal(3, MaxNodeDepth(testTree.Root));
+            Assert.Equal(3, testTree.MaxNodeDepth(testTree.Root));
 
             testTree.Add(6, "6");
             testTree.Add(7, "7");
             testTree.Add(8, "8");
-            Assert.Equal(5, MaxNodeDepth(testTree.Root));
+            Assert.Equal(5, testTree.MaxNodeDepth(testTree.Root));
         }
 
         [Theory]
