@@ -7,28 +7,55 @@ namespace FileParser.Repos
 {
     public class MovieBinaryTreeRepo : IMovieRepo
     {
+        public  enum BinaryTreeType { BinaryTree, RedBlackBinaryTree }
+
         public FirstField Field { get; set; }
+        public BinaryTreeType TreeType { get; set; }
 
-        public RedBlackTree<long, Dictionary<string, List<Movie>>> BinaryTreeByYearByGenre;
-        public Dictionary<string, RedBlackTree<long, List<Movie>>> BinaryTreeByGenreByYear;
+        public BinaryTree<long, Dictionary<string, IList<Movie>>> BinaryTreeByYearByGenre;
+        public Dictionary<string, BinaryTree<long, IList<Movie>>> BinaryTreeByGenreByYear;
 
-        public BinaryTree<long, List<Movie>> MoneyGrossBinaryTree { get; set; }
+        public BinaryTree<long, IList<Movie>> MoneyGrossBinaryTree { get; set; }
 
         public string Type()
         {
-            return "Binary Tree";
+            if (TreeType == BinaryTreeType.BinaryTree)
+                return "Binary Tree";
+            else
+                return "Red Black Binary Tree";
+        }
+
+        public MovieBinaryTreeRepo(BinaryTreeType treeType)
+        {
+            TreeType = treeType;
+        }
+
+        private void InitDataStructure()
+        {
+            if(Field == FirstField.Year)
+            {
+                if(TreeType == BinaryTreeType.BinaryTree)
+                    BinaryTreeByYearByGenre = new BinaryTree<long, Dictionary<string, IList<Movie>>>();
+                else
+                    BinaryTreeByYearByGenre = new RedBlackTree<long, Dictionary<string, IList<Movie>>>();
+            }
+            else
+            {
+                //Since the BinaryTree in this case is not being instantiated we delay the check till the init method
+                BinaryTreeByGenreByYear = new Dictionary<string, BinaryTree<long, IList<Movie>>>();                    
+            }
         }
 
         public void Init(ICollection<Movie> movies, FirstField ff)
         {
             Field = ff;
+            
+            InitDataStructure();            
             if (Field == FirstField.Year)
-            {
-                BinaryTreeByYearByGenre = new RedBlackTree<long, Dictionary<string, List<Movie>>>();
-
+            {               
                 foreach (var YearGrp in movies.GroupBy(m => m.Year))
                 {                    
-                    Dictionary<string, List<Movie>> genreDict = new Dictionary<string, List<Movie>>();
+                    Dictionary<string, IList<Movie>> genreDict = new Dictionary<string, IList<Movie>>();
 
                     foreach (var genreGrp in YearGrp.GroupBy(m => m.Genre))
                     {
@@ -40,24 +67,31 @@ namespace FileParser.Repos
                 }
             }
             else
-            {
-                BinaryTreeByGenreByYear = new Dictionary<string, RedBlackTree<long, List<Movie>>>();
-
+            {               
                 foreach (var genreGrp in movies.GroupBy(m => m.Genre))                    
                 {
-                    RedBlackTree<long, List<Movie>> yearTree = new RedBlackTree<long, List<Movie>>();
+                    BinaryTree<long, IList<Movie>> yearTree;
+                    if (BinaryTreeType.BinaryTree == TreeType)
+                        yearTree = new BinaryTree<long, IList<Movie>>();
+                    else
+                        yearTree = new RedBlackTree<long, IList<Movie>>();
 
                     foreach (var YearGrp in genreGrp.GroupBy(m => m.Year))
                     {
                         long year = YearGrp.Key;
                         yearTree.Add(year, YearGrp.ToList());
                     }
+
                     BinaryTreeByGenreByYear.Add(genreGrp.Key, yearTree);
                 }
             }
+            
+            if (BinaryTreeType.BinaryTree == TreeType)
+                MoneyGrossBinaryTree = new BinaryTree<long, IList<Movie>>();
+            else
+                MoneyGrossBinaryTree = new RedBlackTree<long, IList<Movie>>();
 
-            MoneyGrossBinaryTree = new BinaryTree<long, List<Movie>>();
-            foreach( var grossGrp in movies.GroupBy( m => m.Gross))
+            foreach ( var grossGrp in movies.GroupBy( m => m.Gross))
             {
                 MoneyGrossBinaryTree.Add(grossGrp.Key, grossGrp.ToList());
             }
@@ -68,22 +102,23 @@ namespace FileParser.Repos
             long returnCnt = 0;
             if (Field == FirstField.Year)
             {
-                List<Dictionary<string, List<Movie>>> rng = BinaryTreeByYearByGenre.Range(startYear, endYear);
+                IList<Dictionary<string, IList<Movie>>> rng = BinaryTreeByYearByGenre.Range(startYear, endYear);
                 for(int i = 0; i<rng.Count(); i++)
                 {
-                    rng[i].TryGetValue(genre, out List<Movie> movies);
+                    rng[i].TryGetValue(genre, out IList<Movie> movies);
                     if (movies != null)
                         returnCnt += movies.Count();
                 }
             }
             else
             {
-                BinaryTreeByGenreByYear.TryGetValue(genre, out RedBlackTree<long, List<Movie>> yearTree);
+                BinaryTreeByGenreByYear.TryGetValue(genre, out BinaryTree<long, IList<Movie>> yearTree);
                 if (yearTree != null)
                 {
-                    foreach (var l in yearTree.Range(startYear, endYear))
+                    IList<IList<Movie>> l = yearTree.Range(startYear, endYear);
+                    for(int i = 0; i< l.Count; i++)
                     {
-                        returnCnt += l.Count();
+                        returnCnt += l[i].Count();
                     }
                 }
             }
@@ -94,10 +129,10 @@ namespace FileParser.Repos
         {
             long returnCnt = 0;
 
-            List<List<Movie>> list = MoneyGrossBinaryTree.Range(minGross, maxGross);
+            IList<IList<Movie>> list = MoneyGrossBinaryTree.Range(minGross, maxGross);
             for (int i = 0; i < list.Count; i++)
             {
-                List<Movie> l = list[i];
+                IList<Movie> l = list[i];
                 returnCnt += l.Count();
             }
 

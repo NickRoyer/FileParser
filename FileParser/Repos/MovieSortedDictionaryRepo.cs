@@ -46,12 +46,12 @@ namespace FileParser.Repos
             long returnCnt = 0;
             if (FirstField.Year == Field)
             {
-                var s = SortedDictByYearByGenre
+                List<KeyValuePair<long, Dictionary<string, List<Movie>>>> s = SortedDictByYearByGenre
                                 .Where(x => x.Key >= startYear && x.Key <= endYear)
                                 .ToList();
-                foreach (var kvp in s)
+                for(int i = 0; i<s.Count; i++)
                 {
-                    kvp.Value.TryGetValue(genre, out List<Movie> movies);
+                    s[i].Value.TryGetValue(genre, out List<Movie> movies);
                     if (movies != null)
                         returnCnt += movies.Count();
                 }
@@ -62,10 +62,10 @@ namespace FileParser.Repos
 
                 if (YearSortedDict != null)
                 {
-                    var s = YearSortedDict.Where(x => x.Key >= startYear && x.Key <= endYear).ToList();
-                    foreach (var kvp in s)
+                    List<KeyValuePair<long, List<Movie>>> s = YearSortedDict.Where(x => x.Key >= startYear && x.Key <= endYear).ToList();
+                    for(int i =0; i<s.Count; i++)
                     {
-                        returnCnt += kvp.Value.Count();
+                        returnCnt += s[i].Value.Count();
                     }
                 }
             }
@@ -75,8 +75,9 @@ namespace FileParser.Repos
 
         public long FindMoviesInGrossReceiptRange(long minGross, long maxGross)
         {
-            //return MoneyGrossSearchTree.Where(x => x.Key >= minGross && x.Key <= maxGross).SelectMany(a => a.Value).Count();
-            throw new Exception("Not Implemented");
+            
+            return MoneyGrossSearchTree.Where(x => x.Key >= minGross && x.Key <= maxGross).SelectMany(a => a.Value).Count();
+            //throw new Exception("Not Implemented");
         }
     }
 }

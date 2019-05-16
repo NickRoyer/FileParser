@@ -48,6 +48,8 @@ namespace FileParser.Repos
     {
         public BinaryTreeNode<K, V> Root { get; protected set; }
 
+        public int Count { get; protected set; }
+
         public virtual void Add(K key, V value)
         {
             BinaryTreeNode<K, V> newNode = new BinaryTreeNode<K, V>(key, value);
@@ -78,6 +80,7 @@ namespace FileParser.Repos
                         {
                             parent.Left = newNode;
                             newNode.Parent = parent;
+                            Count++;
                             return;
                         }
                     }
@@ -88,6 +91,7 @@ namespace FileParser.Repos
                         {
                             parent.Right = newNode;
                             newNode.Parent = parent;
+                            Count++;
                             return;
                         }
                     }
@@ -139,13 +143,13 @@ namespace FileParser.Repos
             return default;
         }
 
-        public List<V> Range(K StartInc, K EndInc)
+        public IList<V> Range(K StartInc, K EndInc)
         {
             BinaryTreeNode<K, V> foundNode = FindMinNodeForKey(StartInc);
-            return InOrderValuesRange(foundNode, ref StartInc, ref EndInc);
+            return InOrderValuesRange(foundNode, ref StartInc, EndInc);
         }
 
-        protected List<V> InOrderValuesRangeSubTree(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
+        protected IList<V> InOrderValuesRangeSubTree(BinaryTreeNode<K, V> node, ref K rangeMin, K rangeMax, IList<V> l = null)
         {                        
             if (l == null)
                 l = new List<V>();
@@ -154,7 +158,7 @@ namespace FileParser.Repos
                 return l;
 
             if (node.Left != null && node.Key.CompareTo(rangeMin) > 0)
-                InOrderValuesRangeSubTree(node.Left, ref rangeMin, ref rangeMax, l);
+                InOrderValuesRangeSubTree(node.Left, ref rangeMin, rangeMax, l);
 
             if (node.Key.CompareTo(rangeMin) >= 0 && node.Key.CompareTo(rangeMax) <= 0)
             {
@@ -163,12 +167,12 @@ namespace FileParser.Repos
             }
 
             if (node.Right != null && node.Key.CompareTo(rangeMax) <= 0)
-                InOrderValuesRangeSubTree(node.Right, ref rangeMin, ref rangeMax, l);
+                InOrderValuesRangeSubTree(node.Right, ref rangeMin, rangeMax, l);
 
             return l;
         }
 
-        protected List<V> InOrderValuesRange(BinaryTreeNode<K, V> node, ref K rangeMin, ref K rangeMax, List<V> l = null)
+        protected IList<V> InOrderValuesRange(BinaryTreeNode<K, V> node, ref K rangeMin, K rangeMax, IList<V> l = null)
         {
             if (l == null)
                 l = new List<V>();
@@ -186,7 +190,7 @@ namespace FileParser.Repos
                 bool rootReached = false ;
                 do
                 {
-                    InOrderValuesRangeSubTree(node, ref rangeMin, ref rangeMax, l);
+                    InOrderValuesRangeSubTree(node, ref rangeMin, rangeMax, l);
 
                     bool moveLeft = false;
                     //On Right moving to parent continue, On Left moving to parent stop and traverse the tree for additional values on right children
@@ -215,12 +219,12 @@ namespace FileParser.Repos
             return l;
         }
 
-        public List<V> Values()
+        public IList<V> Values()
         {
             return Inorder(Root);
         }
 
-        protected List<V> Inorder(BinaryTreeNode<K, V> node, List<V> l = null)
+        protected IList<V> Inorder(BinaryTreeNode<K, V> node, IList<V> l = null)
         {
             if (l == null)
                 l = new List<V>();

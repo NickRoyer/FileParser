@@ -129,10 +129,12 @@ namespace ParserUnitTests
         //    Assert.Equal(3, mr.FindMovies(2015, 2016, "Drama:Western"));
         //}
 
-        [Fact]
-        public void Verify_BinaryTreeDictionary_YearFirstLoad()
+        [Theory]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.BinaryTree)]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree)]
+        public void Verify_BinaryTreeDictionary_YearFirstLoad(MovieBinaryTreeRepo.BinaryTreeType type)
         {
-            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo();
+            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo(type);
             mr.Init(MockMovieList, FirstField.Year);
 
             Assert.NotNull(mr.BinaryTreeByYearByGenre);
@@ -140,10 +142,12 @@ namespace ParserUnitTests
             Assert.Equal(3, mr.FindMovies(2015, 2016, "Drama:Western"));
         }
 
-        [Fact]
-        public void Verify_BinaryTreeDictionary_GenreFirstLoad()
+        [Theory]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.BinaryTree)]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree)]
+        public void Verify_BinaryTreeDictionary_GenreFirstLoad(MovieBinaryTreeRepo.BinaryTreeType type)
         {
-            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo();
+            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo(type);
             mr.Init(MockMovieList, FirstField.Genre);
 
             Assert.NotNull(mr.BinaryTreeByGenreByYear);
@@ -152,10 +156,12 @@ namespace ParserUnitTests
         }
 
 
-        [Fact]
-        public void Verify_BinaryTreeGrossCnt()
+        [Theory]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.BinaryTree)]
+        [InlineData(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree)]
+        public void Verify_BinaryTreeGrossCnt(MovieBinaryTreeRepo.BinaryTreeType type)
         {
-            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo();
+            MovieBinaryTreeRepo mr = new MovieBinaryTreeRepo(type);
             mr.Init(MockMovieList, FirstField.Genre);
 
             Assert.NotNull(mr.MoneyGrossBinaryTree);

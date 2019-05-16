@@ -89,7 +89,7 @@ namespace FileParser.Repos
             RedBlackTreeNode<K, V> nodeParent = (RedBlackTreeNode<K, V>)node.Parent;
             RedBlackTreeNode<K, V> nodeUncle = (RedBlackTreeNode<K, V>)node.Uncle();
 
-            if (node.Parent == null)
+            if (nodeParent == null)
                 Insert_1_Root(node);
             else if (nodeParent.Color == BLACK)
                 Insert_2_SKIP(node);
@@ -97,6 +97,10 @@ namespace FileParser.Repos
                 Insert_3_ParentUncleRed(node);
             else
                 Insert_4a_RedParent_BlackUncle(node);
+
+            if (node.Parent != null)
+                Insert_Repair_Tree(nodeParent);
+
         }
 
         private void Insert_1_Root(RedBlackTreeNode<K, V> node)

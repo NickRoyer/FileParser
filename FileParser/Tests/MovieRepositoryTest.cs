@@ -10,7 +10,7 @@ namespace FileParser.Tests
 {
     public class MovieRepositoryTest
     {
-        public enum MovieRepoType { Dictionary, SearchTree, SortedDictionary, BinarySearchTree, Lookup }
+        public enum MovieRepoType { Dictionary, SearchTree, SortedDictionary, BinarySearchTree, RedBlackBinaryTree, Lookup }
 
         public void TestRepositories()
         {
@@ -23,11 +23,17 @@ namespace FileParser.Tests
             CreateResult BTreeYear = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Year, movieList);
             PrintResult(BTreeYear);
 
-            CreateResult DictByGenre = TestRepoGeneration(MovieRepoType.Dictionary, FirstField.Genre, movieList);
-            PrintResult(DictByGenre);
-
             CreateResult BTreeGenre = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Genre, movieList);
             PrintResult(BTreeGenre);
+
+            CreateResult RBTreeYear = TestRepoGeneration(MovieRepoType.RedBlackBinaryTree, FirstField.Year, movieList);
+            PrintResult(RBTreeYear);
+
+            CreateResult RBTreeGenre = TestRepoGeneration(MovieRepoType.RedBlackBinaryTree, FirstField.Genre, movieList);
+            PrintResult(RBTreeGenre);
+
+            CreateResult DictByGenre = TestRepoGeneration(MovieRepoType.Dictionary, FirstField.Genre, movieList);
+            PrintResult(DictByGenre);
 
             CreateResult STreeByYear = TestRepoGeneration(MovieRepoType.SearchTree, FirstField.Year, movieList);
             PrintResult(STreeByYear);
@@ -38,16 +44,24 @@ namespace FileParser.Tests
             CreateResult LookupByGenre = TestRepoGeneration(MovieRepoType.Lookup, FirstField.Genre, movieList);
             PrintResult(LookupByGenre);
 
-            List<IMovieRepo> repoList = new List<IMovieRepo>();
-            repoList.Add(DictByYear.Repo);
-            repoList.Add(DictByGenre.Repo);            
-            repoList.Add(BTreeYear.Repo);
-            repoList.Add(BTreeGenre.Repo);
-            repoList.Add(STreeByYear.Repo);
-            repoList.Add(LookupByGenre.Repo);
-            repoList.Add(LookupByYear.Repo);
-            repoList.Add(MovieRepositoryFactory(MovieRepoType.SortedDictionary, FirstField.Year, movieList));
-            repoList.Add(MovieRepositoryFactory(MovieRepoType.SortedDictionary, FirstField.Genre, movieList));
+            CreateResult SortedDictGenre = TestRepoGeneration(MovieRepoType.SortedDictionary, FirstField.Genre, movieList);
+            PrintResult(SortedDictGenre);
+
+            CreateResult SortedDictYear = TestRepoGeneration(MovieRepoType.SortedDictionary, FirstField.Year, movieList);
+            PrintResult(SortedDictYear);
+
+            List<IMovieRepo> repoList = new List<IMovieRepo>
+            {
+                DictByYear.Repo,
+                DictByGenre.Repo,
+                BTreeYear.Repo,
+                BTreeGenre.Repo,
+                STreeByYear.Repo,
+                LookupByGenre.Repo,
+                LookupByYear.Repo,
+                RBTreeYear.Repo,
+                RBTreeGenre.Repo
+            };
 
             //PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 1, StartYear = 1960, EndYear = 2010, Genre = "Drama:Western" });
 
@@ -62,6 +76,8 @@ namespace FileParser.Tests
             List<IMovieRepo> grossRepos = new List<IMovieRepo>();
             grossRepos.Add(DictByYear.Repo);
             grossRepos.Add(BTreeYear.Repo);
+            grossRepos.Add(RBTreeYear.Repo);
+            grossRepos.Add(SortedDictYear.Repo);
 
             //PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 1, MinGross = 10000, MaxGross = 100000 });
             PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 10, MinGross = 1000, MaxGross = 1000000 });
@@ -99,7 +115,10 @@ namespace FileParser.Tests
                     returnRepo = new MovieLookupRepo();
                     break;
                 case MovieRepoType.BinarySearchTree:
-                    returnRepo = new MovieBinaryTreeRepo();
+                    returnRepo = new MovieBinaryTreeRepo(MovieBinaryTreeRepo.BinaryTreeType.BinaryTree);
+                    break;
+                case MovieRepoType.RedBlackBinaryTree:
+                    returnRepo = new MovieBinaryTreeRepo(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree);
                     break;
                 default:
                     throw new Exception("RepoType: " + rt.ToString() + "Not Implemented");
