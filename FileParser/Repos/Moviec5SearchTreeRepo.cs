@@ -52,7 +52,6 @@ namespace FileParser.Repos
                 SearchTreeByGenreByYear = new Dictionary<string, c5T.TreeDictionary<long, List<Movie>>>();
                 throw new Exception("Not Implemented");
             }
-            
         }
 
         public long FindMovies(long startYear, long endYear, string genre)
@@ -74,7 +73,6 @@ namespace FileParser.Repos
             }
             
             return returnCnt;
-
         }
 
         public long FindMoviesInGrossReceiptRange(long minGross, long maxGross)

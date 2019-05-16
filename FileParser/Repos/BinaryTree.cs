@@ -41,7 +41,6 @@ namespace FileParser.Repos
                 return null;
             return Parent.Sibling();
         }   
-
     }
 
     public class BinaryTree<K, V> where K : IComparable<K>
@@ -262,6 +261,5 @@ namespace FileParser.Repos
 
             return Math.Max(LeftDepth, RightDepth);
         }
-
     }
 }

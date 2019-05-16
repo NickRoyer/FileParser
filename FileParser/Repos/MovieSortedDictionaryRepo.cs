@@ -74,10 +74,8 @@ namespace FileParser.Repos
         }
 
         public long FindMoviesInGrossReceiptRange(long minGross, long maxGross)
-        {
-            
+        {            
             return MoneyGrossSearchTree.Where(x => x.Key >= minGross && x.Key <= maxGross).SelectMany(a => a.Value).Count();
-            //throw new Exception("Not Implemented");
         }
     }
 }

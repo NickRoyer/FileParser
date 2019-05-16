@@ -12,7 +12,6 @@ namespace FileParser.Repos
         }
 
         public byte Color { get; set; }
-
     }
 
     public class RedBlackTree<K,V> : BinaryTree<K,V> where K : IComparable<K> 
@@ -98,10 +97,6 @@ namespace FileParser.Repos
                 Insert_3_ParentUncleRed(node);
             else
                 Insert_4a_RedParent_BlackUncle(node);
-
-            //if (node.Parent != null)
-            //    Insert_Repair_Tree(nodeParent);
-
         }
 
         private void Insert_1_Root(RedBlackTreeNode<K, V> node)
