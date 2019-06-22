@@ -10,7 +10,7 @@ namespace FileParser.Tests
 {
     public class MovieRepositoryTest
     {
-        public enum MovieRepoType { Dictionary, SearchTree, SortedDictionary, BinarySearchTree, RedBlackBinaryTree, Lookup }
+        public enum MovieRepoType { Dictionary, SearchTree, SortedDictionary, BinarySearchTree, RedBlackBinaryTree, Lookup, BTree }
 
         public void TestRepositories()
         {
@@ -20,11 +20,11 @@ namespace FileParser.Tests
             CreateResult DictByYear = TestRepoGeneration(MovieRepoType.Dictionary, FirstField.Year, movieList);
             PrintResult(DictByYear);
 
-            CreateResult BTreeYear = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Year, movieList);
-            PrintResult(BTreeYear);
+            CreateResult BinaryTreeYear = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Year, movieList);
+            PrintResult(BinaryTreeYear);
 
-            CreateResult BTreeGenre = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Genre, movieList);
-            PrintResult(BTreeGenre);
+            CreateResult BinaryTreeGenre = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Genre, movieList);
+            PrintResult(BinaryTreeGenre);
 
             CreateResult RBTreeYear = TestRepoGeneration(MovieRepoType.RedBlackBinaryTree, FirstField.Year, movieList);
             PrintResult(RBTreeYear);
@@ -50,17 +50,25 @@ namespace FileParser.Tests
             CreateResult SortedDictYear = TestRepoGeneration(MovieRepoType.SortedDictionary, FirstField.Year, movieList);
             PrintResult(SortedDictYear);
 
+            CreateResult BTreeYear = TestRepoGeneration(MovieRepoType.BTree, FirstField.Year, movieList);
+            PrintResult(BTreeYear);
+
+            CreateResult BTreeGenre = TestRepoGeneration(MovieRepoType.BTree, FirstField.Genre, movieList);
+            PrintResult(BTreeGenre);
+
             List<IMovieRepo> repoList = new List<IMovieRepo>
             {
                 DictByYear.Repo,
                 DictByGenre.Repo,
-                BTreeYear.Repo,
-                BTreeGenre.Repo,
+                BinaryTreeYear.Repo,
+                BinaryTreeGenre.Repo,
                 STreeByYear.Repo,
                 LookupByGenre.Repo,
                 LookupByYear.Repo,
                 RBTreeYear.Repo,
-                RBTreeGenre.Repo
+                RBTreeGenre.Repo,
+                BTreeYear.Repo,
+                BTreeGenre.Repo
             };
 
             //PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 1, StartYear = 1960, EndYear = 2010, Genre = "Drama:Western" });
@@ -75,15 +83,16 @@ namespace FileParser.Tests
             //These are the only 2 implemented currently 
             List<IMovieRepo> grossRepos = new List<IMovieRepo>();
             grossRepos.Add(DictByYear.Repo);
-            grossRepos.Add(BTreeYear.Repo);
+            grossRepos.Add(BinaryTreeYear.Repo);
             grossRepos.Add(RBTreeYear.Repo);
             grossRepos.Add(SortedDictYear.Repo);
+            grossRepos.Add(BTreeYear.Repo);
 
-            MovieBinaryTreeRepo btr = (MovieBinaryTreeRepo)BTreeYear.Repo;
-            Console.WriteLine("Binary Tree Node Depth: " + btr.MoneyGrossBinaryTree.MaxNodeDepth());
+            //MovieBinaryTreeRepo btr = (MovieBinaryTreeRepo)BTreeYear.Repo;
+            //Console.WriteLine("Binary Tree Node Depth: " + btr.MoneyGrossBinaryTree.MaxNodeDepth());
 
-            MovieBinaryTreeRepo rbtr = (MovieBinaryTreeRepo)RBTreeYear.Repo;
-            Console.WriteLine("RedBlack Tree Node Depth: " + rbtr.MoneyGrossBinaryTree.MaxNodeDepth());
+            //MovieBinaryTreeRepo rbtr = (MovieBinaryTreeRepo)RBTreeYear.Repo;
+            //Console.WriteLine("RedBlack Tree Node Depth: " + rbtr.MoneyGrossBinaryTree.MaxNodeDepth());
 
             //PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 1, MinGross = 10000, MaxGross = 100000 });
             PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 10, MinGross = 1000, MaxGross = 1000000 });
@@ -126,6 +135,9 @@ namespace FileParser.Tests
                 case MovieRepoType.RedBlackBinaryTree:
                     returnRepo = new MovieBinaryTreeRepo(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree);
                     break;
+                case MovieRepoType.BTree:
+                    returnRepo = new MovieBTreeRepo();
+                    break;
                 default:
                     throw new Exception("RepoType: " + rt.ToString() + "Not Implemented");
             }
@@ -158,7 +170,7 @@ namespace FileParser.Tests
                 Console.WriteLine(results.ElementAt(0).Test.ToString());
                 var a = results.OrderBy(q => q.TestTime);
 
-                for (int i = 0; i < Math.Min(a.Count(), 4); i++)
+                for (int i = 0; i < a.Count(); i++) //Math.Min(a.Count(), 4)
                 {
                     switch (i)
                     {
@@ -173,6 +185,9 @@ namespace FileParser.Tests
                             break;
                         case 3:
                             Console.WriteLine("Forth Place:");
+                            break;
+                        default:
+                            Console.WriteLine((i + 1).ToString() + ":");
                             break;
                     }
 

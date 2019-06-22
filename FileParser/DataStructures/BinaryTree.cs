@@ -2,67 +2,68 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileParser.Repos
-{
-    public class BinaryTreeNode<K, V>
-    {
-        public BinaryTreeNode(K key, V value)
-        {
-            Key = key;
-            Value = value;
-        }
-
-        public K Key { get; set; }
-        public V Value { get; set; }
-        public BinaryTreeNode<K, V> Left { get; set; }
-        public BinaryTreeNode<K, V> Right { get; set; }
-        public BinaryTreeNode<K, V> Parent { get; set; }
-
-        public BinaryTreeNode<K, V> GrandParent()
-        {
-            if (Parent == null)
-                return null;
-            return Parent.Parent;
-        }
-
-        public BinaryTreeNode<K, V> Sibling()
-        {
-            if (Parent == null)
-                return null;
-            if (this == Parent.Left)
-                return Parent.Right;
-            else
-                return Parent.Left;
-        }
-
-        public BinaryTreeNode<K, V> Uncle(){
-            BinaryTreeNode<K, V> g = GrandParent();
-            if (g == null || Parent == null)
-                return null;
-            return Parent.Sibling();
-        }   
-    }
-
+namespace FileParser.DataStructures
+{  
     public class BinaryTree<K, V> where K : IComparable<K>
     {
-        public BinaryTreeNode<K, V> Root { get; protected set; }
+        public class BinaryTreeNode
+        {
+            public BinaryTreeNode(K key, V value)
+            {
+                Key = key;
+                Value = value;
+            }
+
+            public K Key { get; set; }
+            public V Value { get; set; }
+            public BinaryTreeNode Left { get; set; }
+            public BinaryTreeNode Right { get; set; }
+            public BinaryTreeNode Parent { get; set; }
+
+            public BinaryTreeNode GrandParent()
+            {
+                if (Parent == null)
+                    return null;
+                return Parent.Parent;
+            }
+
+            public BinaryTreeNode Sibling()
+            {
+                if (Parent == null)
+                    return null;
+                if (this == Parent.Left)
+                    return Parent.Right;
+                else
+                    return Parent.Left;
+            }
+
+            public BinaryTreeNode Uncle()
+            {
+                BinaryTreeNode g = GrandParent();
+                if (g == null || Parent == null)
+                    return null;
+                return Parent.Sibling();
+            }
+        }
+
+        public BinaryTreeNode Root { get; protected set; }
 
         public int Count { get; protected set; }
 
         public virtual void Add(K key, V value)
         {
-            BinaryTreeNode<K, V> newNode = new BinaryTreeNode<K, V>(key, value);
+            BinaryTreeNode newNode = new BinaryTreeNode(key, value);
             InsertNode(newNode);
         }
 
-        protected void InsertNode(BinaryTreeNode<K, V> newNode)
+        protected void InsertNode(BinaryTreeNode newNode)
         {
             if (Root == null)
                 Root = newNode;
             else
             {
-                BinaryTreeNode<K, V> current = Root;
-                BinaryTreeNode<K, V> parent;
+                BinaryTreeNode current = Root;
+                BinaryTreeNode parent;
 
                 while (true)
                 {
@@ -99,13 +100,13 @@ namespace FileParser.Repos
         }
 
         //Find the minimum Node that has a Key Value >= the search key 
-        public BinaryTreeNode<K, V> FindMinNodeForKey(K key)
+        public BinaryTreeNode FindMinNodeForKey(K key)
         {
             if (Root == null)
                 throw new Exception("The tree has not been initialized with at least one element.");
 
-            BinaryTreeNode<K, V> current = Root;
-            BinaryTreeNode<K, V> parent;
+            BinaryTreeNode current = Root;
+            BinaryTreeNode parent;
             while (true)
             {
                 parent = current;
@@ -135,7 +136,7 @@ namespace FileParser.Repos
 
         public V Get(K key)
         {
-            BinaryTreeNode<K, V> foundNode = FindMinNodeForKey(key);
+            BinaryTreeNode foundNode = FindMinNodeForKey(key);
             if (foundNode.Key.CompareTo(key) == 0)
                 return foundNode.Value;
 
@@ -144,14 +145,14 @@ namespace FileParser.Repos
 
         public IList<V> Range(K StartInc, K EndInc)
         {
-            BinaryTreeNode<K, V> foundNode = FindMinNodeForKey(StartInc);
+            BinaryTreeNode foundNode = FindMinNodeForKey(StartInc);
             return InOrderValuesRange(foundNode, ref StartInc, EndInc);
         }
 
-        protected IList<V> InOrderValuesRangeSubTree(BinaryTreeNode<K, V> node, ref K rangeMin, K rangeMax, IList<V> l = null)
+        protected IList<V> InOrderValuesRangeSubTree(BinaryTreeNode node, ref K rangeMin, K rangeMax, IList<V> l = null)
         {                        
             if (l == null)
-                l = new List<V>();
+                l = new List<V>(Count);
 
             if (node == null)
                 return l;
@@ -171,10 +172,10 @@ namespace FileParser.Repos
             return l;
         }
 
-        protected IList<V> InOrderValuesRange(BinaryTreeNode<K, V> node, ref K rangeMin, K rangeMax, IList<V> l = null)
+        protected IList<V> InOrderValuesRange(BinaryTreeNode node, ref K rangeMin, K rangeMax, IList<V> l = null)
         {
             if (l == null)
-                l = new List<V>();
+                l = new List<V>(Count);
 
             if (node != null)
             {
@@ -196,7 +197,7 @@ namespace FileParser.Repos
                     //Once the root has been reached the entire tree has been traversed in order (by calling the recursive function)
                     while (!rootReached && !moveLeft)
                     {
-                        BinaryTreeNode<K, V> parentNode = node.Parent;
+                        BinaryTreeNode parentNode = node.Parent;
                         if (parentNode != null)
                         {
                             if (parentNode.Left == node)
@@ -223,10 +224,10 @@ namespace FileParser.Repos
             return Inorder(Root);
         }
 
-        protected IList<V> Inorder(BinaryTreeNode<K, V> node, IList<V> l = null)
+        protected IList<V> Inorder(BinaryTreeNode node, IList<V> l = null)
         {
             if (l == null)
-                l = new List<V>();
+                l = new List<V>(Count);
 
             if (node == null)
                 return l;
@@ -242,7 +243,7 @@ namespace FileParser.Repos
             return l;
         }
 
-        public int MaxNodeDepth(BinaryTreeNode<K, V> node = null, int depth = 1)
+        public int MaxNodeDepth(BinaryTreeNode node = null, int depth = 1)
         {
             int LeftDepth = depth;
             int RightDepth = depth;

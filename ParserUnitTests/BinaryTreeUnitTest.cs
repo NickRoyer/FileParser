@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
-using FileParser.Repos;
+using FileParser.DataStructures;
 
 namespace ParserUnitTests
 {
@@ -44,7 +44,7 @@ namespace ParserUnitTests
             testTree.Add(3, "Test 3");
             testTree.Add(1, "Test 1");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
 
             Assert.NotNull(currentNode);
             Assert.Equal(5, currentNode.Key);
@@ -77,7 +77,7 @@ namespace ParserUnitTests
             testTree.Add(3, "Test Becomes Root");
             testTree.Add(1, "Test 1");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
 
             Assert.NotNull(currentNode);
             Assert.Equal(3, currentNode.Key);
@@ -112,7 +112,7 @@ namespace ParserUnitTests
             testTree.Add(8, "Test 8");
             testTree.Add(12, "Test 12");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
 
             Assert.NotNull(currentNode);
             Assert.Equal(5, currentNode.Key);
@@ -145,7 +145,7 @@ namespace ParserUnitTests
             testTree.Add(8, "Test becomes Root");
             testTree.Add(12, "Test 12");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
 
             Assert.NotNull(currentNode);
             Assert.Equal(8, currentNode.Key);
@@ -183,7 +183,7 @@ namespace ParserUnitTests
             testTree.Add(8, "8");
             testTree.Add(9, "9");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
             
             Assert.Equal(4, currentNode.Key);
 
@@ -224,43 +224,43 @@ namespace ParserUnitTests
             testTree.Add(2, "2");
             testTree.Add(1, "1");
 
-            RedBlackTreeNode<long, string> currentNode = (RedBlackTreeNode<long, string>)testTree.Root;
+            RedBlackTree<long, string>.RedBlackTreeNode currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)testTree.Root;
             
 
             Assert.Equal(6, currentNode.Key);
             Assert.Equal(0, currentNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
+            currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Left;
 
             Assert.Equal(4, currentNode.Key);
             Assert.Equal(1, currentNode.Color);
 
-            RedBlackTreeNode<long, string> siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            RedBlackTree<long, string>.RedBlackTreeNode siblingNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Sibling();
 
             Assert.Equal(8, siblingNode.Key);
             Assert.Equal(1, siblingNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
+            currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Left;
             Assert.Equal(2, currentNode.Key);
             Assert.Equal(0, currentNode.Color);
 
-            siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            siblingNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Sibling();
             Assert.Equal(5, siblingNode.Key);
             Assert.Equal(0, siblingNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Left;
+            currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Left;
             Assert.Equal(1, currentNode.Key);
             Assert.Equal(1, currentNode.Color);
 
-            siblingNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            siblingNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Sibling();
             Assert.Equal(3, siblingNode.Key);
             Assert.Equal(1, currentNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)testTree.Root.Right.Left;
+            currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)testTree.Root.Right.Left;
             Assert.Equal(7, currentNode.Key);
             Assert.Equal(0, currentNode.Color);
 
-            currentNode = (RedBlackTreeNode<long, string>)currentNode.Sibling();
+            currentNode = (RedBlackTree<long, string>.RedBlackTreeNode)currentNode.Sibling();
             Assert.Equal(9, currentNode.Key);
             Assert.Equal(0, currentNode.Color);
         }
@@ -275,7 +275,7 @@ namespace ParserUnitTests
             testTree.Add(3, "Test 3");
             testTree.Add(12, "Test 12");
 
-            BinaryTreeNode<long, string> currentNode = testTree.Root;
+            BinaryTree<long, string>.BinaryTreeNode currentNode = testTree.Root;
 
             Assert.NotNull(currentNode);
             Assert.Equal(5, currentNode.Key);
@@ -774,10 +774,10 @@ namespace ParserUnitTests
             Assert.Equal(49, testTree.Count);
 
             if (type == TreeType.BinaryTree)
-                Assert.Equal(11, MaxNodeDepth(testTree.Root));
+                Assert.Equal(11, testTree.MaxNodeDepth(testTree.Root));
 
             if (type == TreeType.RedBlackTree)
-                Assert.Equal(7, MaxNodeDepth(testTree.Root));
+                Assert.Equal(7, testTree.MaxNodeDepth(testTree.Root));
         }
 
         [Theory]

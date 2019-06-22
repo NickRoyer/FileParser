@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileParser.Repos
+namespace FileParser.DataStructures
 {
-    public class RedBlackTreeNode<K,V> : BinaryTreeNode<K,V> 
-    {
-        public RedBlackTreeNode(K key, V value, byte color):base(key, value)
-        {
-            Color = color;
-        }
-
-        public byte Color { get; set; }
-    }
-
     public class RedBlackTree<K,V> : BinaryTree<K,V> where K : IComparable<K> 
     {
+        public class RedBlackTreeNode : BinaryTreeNode
+        {
+            public RedBlackTreeNode(K key, V value, byte color) : base(key, value)
+            {
+                Color = color;
+            }
+
+            public byte Color { get; set; }
+        }
+
         public const byte RED = 1;
         public const byte BLACK = 0;
 
         public override void Add(K key, V value)
         {
-            RedBlackTreeNode<K, V> newNode = new RedBlackTreeNode<K, V>(key, value, RED);
+            RedBlackTreeNode newNode = new RedBlackTreeNode(key, value, RED);
             InsertNode(newNode);
             Insert_Repair_Tree(newNode);
         }
 
         //These methods were transcribed from Wikipedia:  https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
 
-        private void Rotate_Left(RedBlackTreeNode<K, V> nOrig)
+        private void Rotate_Left(RedBlackTreeNode nOrig)
         {
-            RedBlackTreeNode<K, V> nOrigRight = (RedBlackTreeNode < K, V > )nOrig.Right;
-            RedBlackTreeNode<K, V> nOrigParent = (RedBlackTreeNode < K, V > )nOrig.Parent;
+            RedBlackTreeNode nOrigRight = (RedBlackTreeNode)nOrig.Right;
+            RedBlackTreeNode nOrigParent = (RedBlackTreeNode)nOrig.Parent;
 
             if (nOrigRight == null)
                 throw new Exception("A leaf node cannot be promoted since it is empty");
@@ -56,10 +56,10 @@ namespace FileParser.Repos
             nOrigRight.Parent = nOrigParent;
         }
 
-        private void Rotate_Right(RedBlackTreeNode<K, V> nOrig)
+        private void Rotate_Right(RedBlackTreeNode nOrig)
         {
-            RedBlackTreeNode<K, V> nOrigLeft = (RedBlackTreeNode < K, V > )nOrig.Left;
-            RedBlackTreeNode<K, V> nOrigParent = (RedBlackTreeNode < K, V > )nOrig.Parent;
+            RedBlackTreeNode nOrigLeft = (RedBlackTreeNode)nOrig.Left;
+            RedBlackTreeNode nOrigParent = (RedBlackTreeNode)nOrig.Parent;
 
             if (nOrigLeft == null)
                 throw new Exception("A leaf node cannot be promoted since it is empty");
@@ -84,10 +84,10 @@ namespace FileParser.Repos
             nOrigLeft.Parent = nOrigParent;
         }
 
-        private void Insert_Repair_Tree(RedBlackTreeNode<K, V> node)
+        private void Insert_Repair_Tree(RedBlackTreeNode node)
         {
-            RedBlackTreeNode<K, V> nodeParent = (RedBlackTreeNode<K, V>)node.Parent;
-            RedBlackTreeNode<K, V> nodeUncle = (RedBlackTreeNode<K, V>)node.Uncle();
+            RedBlackTreeNode nodeParent = (RedBlackTreeNode) node.Parent;
+            RedBlackTreeNode nodeUncle = (RedBlackTreeNode)node.Uncle();
 
             if (nodeParent == null)
                 Insert_1_Root(node);
@@ -99,29 +99,29 @@ namespace FileParser.Repos
                 Insert_4a_RedParent_BlackUncle(node);
         }
 
-        private void Insert_1_Root(RedBlackTreeNode<K, V> node)
+        private void Insert_1_Root(RedBlackTreeNode node)
         {
             if (node.Parent == null)
                 node.Color = BLACK;
         }
 
-        private void Insert_2_SKIP(RedBlackTreeNode<K, V> node)
+        private void Insert_2_SKIP(RedBlackTreeNode node)
         {
             return; // Tree is Valiid 
         }
 
-        private void Insert_3_ParentUncleRed(RedBlackTreeNode<K, V> node)
+        private void Insert_3_ParentUncleRed(RedBlackTreeNode node)
         {
-            RedBlackTreeNode<K, V> nodeParent = (RedBlackTreeNode<K, V>)node.Parent;            
+            RedBlackTreeNode nodeParent = (RedBlackTreeNode)node.Parent;            
 
             if (nodeParent != null)
                 nodeParent.Color = BLACK;
 
-            RedBlackTreeNode<K, V> nodeUncle = (RedBlackTreeNode<K, V>)node.Uncle();
+            RedBlackTreeNode nodeUncle = (RedBlackTreeNode)node.Uncle();
             if (nodeUncle != null)
                 nodeUncle.Color = BLACK;
 
-            RedBlackTreeNode<K, V> grandParent = (RedBlackTreeNode<K, V>)node.GrandParent();
+            RedBlackTreeNode grandParent = (RedBlackTreeNode)node.GrandParent();
             if (grandParent != null)
             {
                 grandParent.Color = RED;
@@ -130,29 +130,29 @@ namespace FileParser.Repos
 
         }
 
-        private void Insert_4a_RedParent_BlackUncle(RedBlackTreeNode<K, V> node)
+        private void Insert_4a_RedParent_BlackUncle(RedBlackTreeNode node)
         {
-            RedBlackTreeNode<K, V> nodeParent = (RedBlackTreeNode<K, V>)node.Parent;
-            RedBlackTreeNode<K, V> nodeGrandParent = (RedBlackTreeNode<K, V>)node.GrandParent();
+            RedBlackTreeNode nodeParent = (RedBlackTreeNode)node.Parent;
+            RedBlackTreeNode nodeGrandParent = (RedBlackTreeNode)node.GrandParent();
 
             if (node == nodeParent.Right && nodeParent == nodeGrandParent.Left)
             {
                 Rotate_Left(nodeParent);
-                node = (RedBlackTreeNode<K, V>)node.Left;
+                node = (RedBlackTreeNode)node.Left;
             }
             else if (node == nodeParent.Left && nodeParent == nodeGrandParent.Right)
             {
                 Rotate_Right(nodeParent);
-                node = (RedBlackTreeNode<K, V>)node.Right;
+                node = (RedBlackTreeNode)node.Right;
             }
 
             Insert_4b_Outside(node);
         }
 
-        private void Insert_4b_Outside(RedBlackTreeNode<K, V> node)
+        private void Insert_4b_Outside(RedBlackTreeNode node)
         {
-            RedBlackTreeNode<K, V> nodeParent = (RedBlackTreeNode<K,V>)node.Parent;
-            RedBlackTreeNode<K, V> nodeGrandParent = (RedBlackTreeNode<K,V>)node.GrandParent();
+            RedBlackTreeNode nodeParent = (RedBlackTreeNode)node.Parent;
+            RedBlackTreeNode nodeGrandParent = (RedBlackTreeNode)node.GrandParent();
 
             if (node == nodeParent.Left)
                 Rotate_Right(nodeGrandParent);
