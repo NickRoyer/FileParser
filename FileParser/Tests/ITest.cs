@@ -8,21 +8,35 @@ namespace FileParser.Tests
     public interface ITest
     {
         IResult RunTest(IMovieRepo repo);
-        string ToString();
-    }
 
-    public interface IRepeatTest : ITest
-    {
         int QueryCnt { get; set; }
+        string ToConsoleString();
+        string TestDataString();
     }
 
-    public class GrossRevTest : IRepeatTest
+    public abstract class BaseTest : ITest
     {
-        public int QueryCnt { get; set; }
+        public abstract IResult RunTest(IMovieRepo repo);
+
+        public virtual int QueryCnt { get; set; }
+
+        public virtual string ToConsoleString()
+        {
+            StringBuilder a = new StringBuilder();
+            a.AppendLine(TestDataString());
+            a.AppendLine("Query Cnt: " + QueryCnt.ToString());
+            return a.ToString();
+        }
+
+        public abstract string TestDataString();
+    }
+
+    public class GrossRevTest : BaseTest
+    {
         public long MinGross { get; set; }
         public long MaxGross { get; set; }
 
-        public IResult RunTest(IMovieRepo repo)
+        public override IResult RunTest(IMovieRepo repo)
         {
             long? foundCnt = null;
             for (int i = 0; i < QueryCnt; i++)
@@ -30,27 +44,22 @@ namespace FileParser.Tests
 
             return  (IResult)new GrossRevResult() { FoundMovieCnt = foundCnt, Repo = repo, Test = this };
         }
-
-        public override string ToString()
+       
+        public override string TestDataString()
         {
-            StringBuilder a = new StringBuilder();
-            a.AppendLine("Test of Min:" + MinGross.ToString() + " Max: " + MaxGross.ToString());
-            a.AppendLine("Query Cnt: " + QueryCnt.ToString());
-            return a.ToString();
+            return "Test of Min Gross:" + MinGross.ToString() + " Max Gross: " + MaxGross.ToString();
         }
     }
 
-    public class YearGenreTest : IRepeatTest
+    public class YearGenreTest : BaseTest
     {
-        public int QueryCnt { get; set; }
-
         public long StartYear { get; set; }
 
         public long EndYear { get; set; }
 
         public string Genre { get; set; }
 
-        public IResult RunTest(IMovieRepo repo)
+        public override  IResult RunTest(IMovieRepo repo)
         {
             long? foundCnt = null;
             for (int i = 0; i< QueryCnt; i++)
@@ -59,14 +68,29 @@ namespace FileParser.Tests
             return new YearGenreTestResult() { FoundMovieCnt = foundCnt, Repo = repo, Test = this };
         }
 
-        public override string ToString()
+        public override string TestDataString()
         {
-            StringBuilder a = new StringBuilder();
-            a.AppendLine("Test of : " + Genre + " Start: " + StartYear.ToString() + " End: " + EndYear.ToString());
-            a.AppendLine("Total Years : " + (EndYear - StartYear + 1).ToString());
-            a.AppendLine("Query Cnt: " + QueryCnt);
-            return a.ToString();
+            return "Test of : " + Genre + " Start: " + StartYear.ToString() + " End: " + EndYear.ToString() + " Total Years : " + (EndYear - StartYear + 1);
         }
     }
 
+    public class RepoGenerationTest : BaseTest
+    {
+        public List<Movie> MovieList = null;
+        public FirstField Field;
+        private IMovieRepo Repo = null;
+
+        public override IResult RunTest(IMovieRepo repo)
+        {
+            QueryCnt = 1;
+            Repo = repo;
+            repo.Init(MovieList, Field);
+            return new CreateResult() { Repo = repo, Test = this };
+        }
+
+        public override string TestDataString()
+        {
+            return "Test initializing Repo";
+        }
+    }
 }

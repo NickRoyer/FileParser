@@ -11,7 +11,9 @@ namespace FileParser.Tests
         ITest Test { get; set; }
         TimeSpan TestTime { get; set; }
 
-        string ToString();
+        string TimeAsString();
+
+        string ToConsoleString();
     }
 
     public interface IQueryResult : IResult
@@ -19,17 +21,27 @@ namespace FileParser.Tests
         long? FoundMovieCnt { get; set; }
     }
 
-    public class YearGenreTestResult : IQueryResult
+    public abstract class QueryResultBase : IQueryResult
     {
-        public IMovieRepo Repo { get; set; }
+        public virtual TimeSpan TestTime { get; set; }
+        public virtual long? FoundMovieCnt { get; set; }
+        public virtual IMovieRepo Repo { get; set; }
+        public virtual ITest Test { get; set; }
 
-        public ITest Test { get; set; }
+        public virtual string TimeAsString()
+        {
+            return String.Format("{0:00}:{1:00}.{2:00}",
+                TestTime.Minutes, TestTime.Seconds,
+                TestTime.Milliseconds / 10);
+        }
 
-        public long? FoundMovieCnt { get; set; } = null;
+        public abstract string ToConsoleString();
 
-        public TimeSpan TestTime { get; set; }
+    }
 
-        public override string ToString()
+    public class YearGenreTestResult : QueryResultBase
+    {
+        public override string ToConsoleString()
         {
             if (Test == null)
                 throw new Exception("ERROR Query not set");
@@ -40,22 +52,14 @@ namespace FileParser.Tests
                 a.AppendLine("Error Query Failed");
             else a.AppendLine("Found: " + FoundMovieCnt.ToString());
 
-            a.AppendLine(String.Format("{0:00}:{1:00}.{2:00}",
-                TestTime.Minutes, TestTime.Seconds,
-                TestTime.Milliseconds / 10));
+            a.AppendLine(TimeAsString());
             return a.ToString();
         }
     }
 
-    public class GrossRevResult : IQueryResult
+    public class GrossRevResult : QueryResultBase
     {
-        public IMovieRepo Repo { get; set; }
-        public ITest Test { get; set; }
-        public TimeSpan TestTime { get; set; }
-
-        public long? FoundMovieCnt { get; set; } = null;
-
-        public override string ToString()
+        public override string ToConsoleString()
         {
             StringBuilder a = new StringBuilder();
             a.AppendLine("Type: " + Repo.Type() + " FirstField: " + Repo.Field.ToString());
@@ -63,22 +67,14 @@ namespace FileParser.Tests
                 a.AppendLine("Error Query Failed");
             else a.AppendLine("Found: " + FoundMovieCnt.ToString());
 
-            a.AppendLine(String.Format("{0:00}:{1:00}.{2:00}",
-                TestTime.Minutes, TestTime.Seconds,
-                TestTime.Milliseconds / 10));
+            a.AppendLine(TimeAsString());
             return a.ToString();
         }
     }
 
-    public class CreateResult : IResult
+    public class CreateResult : QueryResultBase
     {
-        public IMovieRepo Repo { get; set; }
-
-        public ITest Test { get; set; }
-
-        public TimeSpan TestTime { get; set; }
-
-        public override string ToString()
+        public override string ToConsoleString()
         {
             //return String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
             //    TestTime.Hours, TestTime.Minutes, TestTime.Seconds,
@@ -87,9 +83,7 @@ namespace FileParser.Tests
             StringBuilder a = new StringBuilder();
             a.AppendLine("Repository for: " + Repo.Type());
             a.AppendLine("First Field: " + Repo.Field.ToString());
-            a.AppendLine(String.Format("{0:00}:{1:00}.{2:00}",
-                TestTime.Minutes, TestTime.Seconds,
-                TestTime.Milliseconds / 10));
+            a.AppendLine(TimeAsString());
             return a.ToString();
         }
     }

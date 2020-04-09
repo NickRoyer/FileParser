@@ -4,57 +4,68 @@ using System.Text;
 using System.Diagnostics;
 using System.Linq;
 using FileParser.Repos;
-
+using System.IO;
 
 namespace FileParser.Tests
 {
     public class MovieRepositoryTest
-    {
-        public enum MovieRepoType { Dictionary, SearchTree, SortedDictionary, BinarySearchTree, RedBlackBinaryTree, Lookup, BTree }
-
+    {        
         public void TestRepositories()
         {
             MovieFileParser fp = new MovieFileParser();
             List<Movie> movieList = fp.LoadFile("MovieData.csv");
 
-            CreateResult DictByYear = TestRepoGeneration(MovieRepoType.Dictionary, FirstField.Year, movieList);
+            CreateResult DictByYear = TestRepoGeneration(MovieRepoFactory.Type.Dictionary, FirstField.Year, movieList);
             PrintResult(DictByYear);
 
-            CreateResult BinaryTreeYear = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Year, movieList);
+            CreateResult BinaryTreeYear = TestRepoGeneration(MovieRepoFactory.Type.BinarySearchTree, FirstField.Year, movieList);
             PrintResult(BinaryTreeYear);
 
-            CreateResult BinaryTreeGenre = TestRepoGeneration(MovieRepoType.BinarySearchTree, FirstField.Genre, movieList);
+            CreateResult BinaryTreeGenre = TestRepoGeneration(MovieRepoFactory.Type.BinarySearchTree, FirstField.Genre, movieList);
             PrintResult(BinaryTreeGenre);
 
-            CreateResult RBTreeYear = TestRepoGeneration(MovieRepoType.RedBlackBinaryTree, FirstField.Year, movieList);
+            CreateResult RBTreeYear = TestRepoGeneration(MovieRepoFactory.Type.RedBlackBinaryTree, FirstField.Year, movieList);
             PrintResult(RBTreeYear);
 
-            CreateResult RBTreeGenre = TestRepoGeneration(MovieRepoType.RedBlackBinaryTree, FirstField.Genre, movieList);
+            CreateResult RBTreeGenre = TestRepoGeneration(MovieRepoFactory.Type.RedBlackBinaryTree, FirstField.Genre, movieList);
             PrintResult(RBTreeGenre);
 
-            CreateResult DictByGenre = TestRepoGeneration(MovieRepoType.Dictionary, FirstField.Genre, movieList);
+            CreateResult DictByGenre = TestRepoGeneration(MovieRepoFactory.Type.Dictionary, FirstField.Genre, movieList);
             PrintResult(DictByGenre);
 
-            CreateResult STreeByYear = TestRepoGeneration(MovieRepoType.SearchTree, FirstField.Year, movieList);
+            CreateResult STreeByYear = TestRepoGeneration(MovieRepoFactory.Type.SearchTree, FirstField.Year, movieList);
             PrintResult(STreeByYear);
 
-            CreateResult LookupByYear = TestRepoGeneration(MovieRepoType.Lookup, FirstField.Year, movieList);
+            CreateResult LookupByYear = TestRepoGeneration(MovieRepoFactory.Type.Lookup, FirstField.Year, movieList);
             PrintResult(LookupByYear);
 
-            CreateResult LookupByGenre = TestRepoGeneration(MovieRepoType.Lookup, FirstField.Genre, movieList);
+            CreateResult LookupByGenre = TestRepoGeneration(MovieRepoFactory.Type.Lookup, FirstField.Genre, movieList);
             PrintResult(LookupByGenre);
 
-            CreateResult SortedDictGenre = TestRepoGeneration(MovieRepoType.SortedDictionary, FirstField.Genre, movieList);
+            CreateResult SortedDictGenre = TestRepoGeneration(MovieRepoFactory.Type.SortedDictionary, FirstField.Genre, movieList);
             PrintResult(SortedDictGenre);
 
-            CreateResult SortedDictYear = TestRepoGeneration(MovieRepoType.SortedDictionary, FirstField.Year, movieList);
+            CreateResult SortedDictYear = TestRepoGeneration(MovieRepoFactory.Type.SortedDictionary, FirstField.Year, movieList);
             PrintResult(SortedDictYear);
 
-            CreateResult BTreeYear = TestRepoGeneration(MovieRepoType.BTree, FirstField.Year, movieList);
+            CreateResult BTreeYear = TestRepoGeneration(MovieRepoFactory.Type.BTree, FirstField.Year, movieList);
             PrintResult(BTreeYear);
 
-            CreateResult BTreeGenre = TestRepoGeneration(MovieRepoType.BTree, FirstField.Genre, movieList);
+            CreateResult BTreeGenre = TestRepoGeneration(MovieRepoFactory.Type.BTree, FirstField.Genre, movieList);
             PrintResult(BTreeGenre);
+
+            CreateResult LinqListGenre = TestRepoGeneration(MovieRepoFactory.Type.LinqList, FirstField.Genre, movieList);
+            PrintResult(LinqListGenre);
+
+            CreateResult LinqListYear = TestRepoGeneration(MovieRepoFactory.Type.LinqList, FirstField.Year, movieList);
+            PrintResult(LinqListYear);
+
+            //Parallel results were very similar to Standard linq 
+            //CreateResult LinqListParGenre = TestRepoGeneration(MovieRepoType.LinqParList, FirstField.Genre, movieList);
+            //PrintResult(LinqListParGenre);
+
+            //CreateResult LinqListParYear = TestRepoGeneration(MovieRepoType.LinqParList, FirstField.Year, movieList);
+            //PrintResult(LinqListParYear);
 
             List<IMovieRepo> repoList = new List<IMovieRepo>
             {
@@ -68,25 +79,37 @@ namespace FileParser.Tests
                 RBTreeYear.Repo,
                 RBTreeGenre.Repo,
                 BTreeYear.Repo,
-                BTreeGenre.Repo
+                BTreeGenre.Repo,
+                LinqListGenre.Repo,
+                LinqListYear.Repo
+                //, LinqListParYear.Repo,
+                //LinqListParGenre.Repo
             };
 
             //PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 1, StartYear = 1960, EndYear = 2010, Genre = "Drama:Western" });
+            //Easy query to validate it is working
+            PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 100, StartYear = 2015, EndYear = 2015, Genre = "Drama:Western" });
+
+            //Processing the Linq List queries takes signficantly longer than the other tests so they are removed
+            repoList.Remove(LinqListGenre.Repo);
+            repoList.Remove(LinqListYear.Repo);
 
             //Single item in range Favors Dictionary
             PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 20000, StartYear = 2015, EndYear = 2015, Genre = "Drama:Western" });
+
             PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 6000, StartYear = 1995, EndYear = 2015, Genre = "Drama:Western" });
             PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 6000, StartYear = 1965, EndYear = 2015, Genre = "Drama:Western" });
             PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 6000, StartYear = 1915, EndYear = 2015, Genre = "Drama:Western" });
             PrintAndExecuteForRepos(repoList, new YearGenreTest() { QueryCnt = 6000, StartYear = 1880, EndYear = 2017, Genre = "Drama:Western" });
 
-            //These are the only 2 implemented currently 
             List<IMovieRepo> grossRepos = new List<IMovieRepo>();
             grossRepos.Add(DictByYear.Repo);
             grossRepos.Add(BinaryTreeYear.Repo);
             grossRepos.Add(RBTreeYear.Repo);
             grossRepos.Add(SortedDictYear.Repo);
             grossRepos.Add(BTreeYear.Repo);
+            grossRepos.Add(LinqListYear.Repo);
+            //grossRepos.Add(LinqListParYear.Repo);
 
             //MovieBinaryTreeRepo btr = (MovieBinaryTreeRepo)BTreeYear.Repo;
             //Console.WriteLine("Binary Tree Node Depth: " + btr.MoneyGrossBinaryTree.MaxNodeDepth());
@@ -98,68 +121,40 @@ namespace FileParser.Tests
             PrintAndExecuteForRepos(grossRepos, new GrossRevTest() { QueryCnt = 10, MinGross = 1000, MaxGross = 1000000 });
         }
 
-        private CreateResult TestRepoGeneration(MovieRepoType rt, FirstField ff, List<Movie> movieList)
+        private CreateResult TestRepoGeneration(MovieRepoFactory.Type rt, FirstField ff, List<Movie> movieList)
         {
-            Stopwatch sw = new Stopwatch();
-            IMovieRepo repo = null; 
-            sw.Start();
-
-            repo = MovieRepositoryFactory(rt, ff, movieList);
-
-            sw.Stop();
-
-            return new CreateResult { Repo = repo, TestTime = sw.Elapsed };
-        }
-
-
-        private IMovieRepo MovieRepositoryFactory(MovieRepoType rt, FirstField ff, List<Movie> movieList)
-        {
-            IMovieRepo returnRepo;
-            switch (rt)
-            {
-                case MovieRepoType.Dictionary:
-                    returnRepo = new MovieDictionaryRepo();                    
-                    break;
-                case MovieRepoType.SortedDictionary:
-                    returnRepo = new MovieSortedDictionaryRepo();
-                    break;
-                case MovieRepoType.SearchTree:
-                    returnRepo = new MovieC5SearchTreeRepo();
-                    break;
-                case MovieRepoType.Lookup:
-                    returnRepo = new MovieLookupRepo();
-                    break;
-                case MovieRepoType.BinarySearchTree:
-                    returnRepo = new MovieBinaryTreeRepo(MovieBinaryTreeRepo.BinaryTreeType.BinaryTree);
-                    break;
-                case MovieRepoType.RedBlackBinaryTree:
-                    returnRepo = new MovieBinaryTreeRepo(MovieBinaryTreeRepo.BinaryTreeType.RedBlackBinaryTree);
-                    break;
-                case MovieRepoType.BTree:
-                    returnRepo = new MovieBTreeRepo();
-                    break;
-                default:
-                    throw new Exception("RepoType: " + rt.ToString() + "Not Implemented");
-            }
-
-            returnRepo.Init(movieList, ff);
-
-            return returnRepo;     
-        }
-
-        private void PrintAndExecute(IMovieRepo repo, ITest t)
-        {
-            PrintResult(ExecuteTest(repo, t));
-        }
+            return (CreateResult)ExecuteTest(MovieRepoFactory.Repo(rt), new RepoGenerationTest() { MovieList = movieList, Field = ff });
+        }       
 
         private void PrintAndExecuteForRepos(List<IMovieRepo> repoList, ITest t)
         {
             PrintResult(ExecuteTestForRepos(repoList, t));
         }
 
+        private string FileOutput(IResult r)
+        {
+            StringBuilder a = new StringBuilder();
+            a.Append(r.Test.TestDataString());
+            a.Append(",");
+            a.Append(r.Test.QueryCnt);
+            a.Append(",");
+            a.Append(r.Repo.Type());
+            a.Append(",");
+            a.Append(r.Repo.Field.ToString());
+            a.Append(",");
+            a.Append(r.TestTime.TotalMilliseconds);
+            return a.ToString();
+        }
+
         private void PrintResult(IResult r)
         {
-            Console.WriteLine(r.ToString());
+            Console.WriteLine(r.ToConsoleString());
+
+            //Move to a config var
+            using (StreamWriter sw = File.AppendText("FileParserResults.csv"))
+            {                
+                sw.WriteLine(FileOutput(r));
+            }
         }
 
         private void PrintResult(ICollection<IResult> results)
@@ -167,7 +162,7 @@ namespace FileParser.Tests
             Console.WriteLine();
             if (results.Count() > 0)
             {
-                Console.WriteLine(results.ElementAt(0).Test.ToString());
+                Console.WriteLine(results.ElementAt(0).Test.ToConsoleString());
                 var a = results.OrderBy(q => q.TestTime);
 
                 for (int i = 0; i < a.Count(); i++) //Math.Min(a.Count(), 4)
